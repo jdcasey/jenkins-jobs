@@ -1,5 +1,6 @@
 github-url: https://github.com/Commonjava/galley
 name: galley
+jdk: JDK 1.8
 branches:
   - master
   - 0.11.x
