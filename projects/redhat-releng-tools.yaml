@@ -1,2 +1,3 @@
 github-url: https://github.com/release-engineering/redhat-releng-tools
 name: redhat-releng-tools
+jdk: JDK 1.8
