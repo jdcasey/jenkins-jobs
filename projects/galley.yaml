@@ -1,0 +1,5 @@
+github-url: https://github.com/Commonjava/galley
+name: galley
+branches:
+  - master
+  - 0.11.x

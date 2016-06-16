@@ -1,0 +1,6 @@
+jdk: 'JDK 1.7'
+jobs:
+  pr-build: '%(name)s-PRs'
+  branch-build: '%(name)s-%(branch)s'
+branches:
+  - master
