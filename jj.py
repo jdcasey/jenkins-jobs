@@ -14,6 +14,8 @@ DEFAULTS=os.path.join(os.getcwd(), 'defaults.yaml')
 class JenkinsJobs(object):
     def __init__(self, url):
         self.url = url
+        self.templates = None
+        self.defaults = None
 
         self.secrets = {}
         if os.path.exists(SECRETS):
@@ -28,16 +30,22 @@ class JenkinsJobs(object):
         self.server = jenkins.Jenkins(self.url, username=self.secrets['username'], password=self.secrets['token'])
         self.secrets.pop('token', None)
 
-        generated_dir = os.path.join(os.getcwd(), GENERATED_XML)
-        if os.path.isdir(generated_dir):
-            shutil.rmtree(generated_dir)
-        os.makedirs(generated_dir)
+        self.generated_dir = os.path.join(os.getcwd(), GENERATED_XML)
+        if os.path.isdir(self.generated_dir):
+            shutil.rmtree(self.generated_dir)
+        os.makedirs(self.generated_dir)
+
+    def get_existing(self):
+        return self.server.get_all_jobs()
+
+    def delete(self, name):
+        self.server.delete_job(name)
 
     def load_project(self, yaml_file):
-        init_defaults()
+        self.init_defaults()
         project = self.defaults.copy()
-        project.update(secrets)
-        with open(yamlfile) as f:
+        project.update(self.secrets)
+        with open(yaml_file) as f:
             project.update(yaml.load(f))
         return project
 
@@ -66,11 +74,11 @@ class JenkinsJobs(object):
         return self.templates
 
     def create_or_update(self, name, jobxml):
-        with open(os.path.join(generated_dir, "%s.xml" % name), 'w') as f:
+        with open(os.path.join(self.generated_dir, "%s.xml" % name), 'w') as f:
             f.write(jobxml)
 
         try:
-            if server.job_exists(name) is True:
+            if self.server.job_exists(name) is True:
                 print "Updating: %s" % name
                 self.server.reconfig_job(name, jobxml)
             else:
@@ -82,7 +90,7 @@ class JenkinsJobs(object):
         return False
 
     def build(self, name):
-        print "Triggering rebuild of: %s" % name
+        print "Triggering build: %s" % name
         self.server.build_job(name)
 
 
