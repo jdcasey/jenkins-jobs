@@ -1,2 +1,3 @@
+disabled: true
 github-url: https://github.com/Commonjava/CI-integration-test
 name: CI-integration-test

@@ -13,8 +13,7 @@ URL=sys.argv[1]
 
 jobs = jj.JenkinsJobs(URL)
 
-templates = jobs.load_templates()
-
+projects = []
 for yamlfile in glob.glob('projects/*.yaml'):
     project = jobs.load_project(yamlfile)
 
@@ -26,13 +25,15 @@ for yamlfile in glob.glob('projects/*.yaml'):
         if job == jj.BRANCH_BUILD_JOB:
             for branch in project['branches']:
                 project['branch'] = branch
-                jobname = nameformat % project
-                jobxml = templates[job] % project
-                jobs.create_or_update(jobname, jobxml)
-                jobs.build(jobname)
+                projects.append(nameformat % project)
         else:
-            jobname = nameformat % project
-            jobxml = templates[job] % project
-            jobs.create_or_update(jobname, jobxml)
+            projects.append(nameformat % project)
 
-
+existing = jobs.get_existing()
+for job in existing:
+	name = job['name']
+	if name not in projects:
+		print "Purging: %s" % name
+		jobs.delete(name)
+	else:
+		print "Keeping: %s" % name

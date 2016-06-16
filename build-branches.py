@@ -13,8 +13,6 @@ URL=sys.argv[1]
 
 jobs = jj.JenkinsJobs(URL)
 
-templates = jobs.load_templates()
-
 for yamlfile in glob.glob('projects/*.yaml'):
     project = jobs.load_project(yamlfile)
 
@@ -26,13 +24,4 @@ for yamlfile in glob.glob('projects/*.yaml'):
         if job == jj.BRANCH_BUILD_JOB:
             for branch in project['branches']:
                 project['branch'] = branch
-                jobname = nameformat % project
-                jobxml = templates[job] % project
-                jobs.create_or_update(jobname, jobxml)
-                jobs.build(jobname)
-        else:
-            jobname = nameformat % project
-            jobxml = templates[job] % project
-            jobs.create_or_update(jobname, jobxml)
-
-
+                jobs.build(nameformat % project)
