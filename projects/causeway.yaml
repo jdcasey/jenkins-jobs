@@ -4,4 +4,4 @@ jdk: JDK 1.8
 branches:
   - name: master
     template: branch-build.xml
-  	build-command: '-B -X -V -T4 clean verify -Prun-its -Pci'
+    build-command: '-B -X -V -T4 clean verify -Prun-its -Pci'
