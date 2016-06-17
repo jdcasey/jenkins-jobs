@@ -9,7 +9,7 @@ import optparse
 parser = optparse.OptionParser()
 
 parser.add_option('-C', '--config', help='Use an alternative configuration (default: {secrets})'.format(secrets=jj.SECRETS))
-parser.add_option('-T', '--trigger', action='store_false' help='Don\'t trigger builds')
+parser.add_option('-T', '--trigger', action='store_false', help='Don\'t trigger builds')
 
 opts, args = parser.parse_args()
 
