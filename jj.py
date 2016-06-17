@@ -4,6 +4,7 @@ import jenkins
 import yaml
 import glob
 import shutil
+import re
 
 BRANCH_NAME = 'branch'
 BUILD_COMMAND = 'build-command'
@@ -81,11 +82,16 @@ class JenkinsJobs(object):
                 self.templates[key] = f.read()
         return self.templates
 
+    def get(self, name):
+        if self.server.job_exists(name):
+            return self.server.get_job_config(name)
+        return None
+
     def create_or_update(self, name, jobxml, update_server=True):
         configDir = os.path.join(self.generated_dir, name)
         if os.path.isdir(configDir) is False:
             os.makedirs(configDir)
-            
+
         configXml = os.path.join(configDir, 'config.xml')
         with open(configXml, 'w') as f:
             f.write(jobxml)
@@ -93,17 +99,26 @@ class JenkinsJobs(object):
         if update_server is True:
             try:
                 if self.server.job_exists(name) is True:
-                    print "Updating: %s" % name
-                    self.server.reconfig_job(name, jobxml)
+                    oldConfig = self.get(name)
+                    with open(os.path.join(configDir, 'config.xml.last'), 'w') as f:
+                        f.write(oldConfig)
+
+                    if re.sub('\s', '', jobxml) != re.sub('\s', '', oldConfig):
+                        print "Updating: %s" % name
+                        self.server.reconfig_job(name, jobxml)
+                        return True
+                    else:
+                        print "Configuration not changed: %s" % name
+                        return False
                 else:
                     print "Creating: %s" % name
                     self.server.create_job(name, jobxml)
-                return True
+                    return True
             except jenkins.JenkinsException as e:
                 print "Failed: %s" % e
-            return False
         else:
-            return False
+            print "In generate-only mode. NOT pushing configuration to server: %s" % name
+        return False
 
     def build(self, name):
         print "Triggering build: %s" % name
