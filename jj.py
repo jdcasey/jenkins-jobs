@@ -7,14 +7,15 @@ import shutil
 
 BRANCH_NAME = 'branch'
 BUILD_COMMAND = 'build-command'
-TEMPLATE_NAME='template'
+TEMPLATE_NAME = 'template'
+NAME_FORMAT = 'name-format'
 
-BRANCH_BUILD_JOB='branch-build.xml'
-PR_BUILD_JOB='pr-build.xml'
+BRANCH_BUILD_JOB = 'branch-build'
+PR_BUILD_JOB = 'pr-build'
 
 GENERATED_XML_DIRNAME = "generated-xml"
-DEFAULT_CONFIG_FILE=os.path.join(os.getenv("HOME"), ".jenkins-jobs.yaml")
-PROJECT_DEFAULTS_FILE=os.path.join(os.getcwd(), 'defaults.yaml')
+DEFAULT_CONFIG_FILE = os.path.join(os.getenv("HOME"), ".jenkins-jobs.yaml")
+PROJECT_DEFAULTS_FILE = os.path.join(os.getcwd(), 'defaults.yaml')
 
 class JenkinsJobs(object):
     def __init__(self, conf=None):
