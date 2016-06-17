@@ -12,21 +12,23 @@ SECRETS=os.path.join(os.getenv("HOME"), ".jenkins-secrets.yaml")
 DEFAULTS=os.path.join(os.getcwd(), 'defaults.yaml')
 
 class JenkinsJobs(object):
-    def __init__(self, url):
-        self.url = url
+    def __init__(self, secrets=None):
+        sfile = secrets or SECRETS
+
         self.templates = None
         self.defaults = None
 
         self.secrets = {}
-        if os.path.exists(SECRETS):
-            with open(SECRETS) as f:
+        if os.path.exists(sfile):
+            with open(sfile) as f:
                 self.secrets = yaml.load(f)
         else:
-            raise "No secrets file found at: %s!" % SECRETS
+            raise "No secrets file found at: %s!" % sfile
 
         if 'username' not in self.secrets or 'token' not in self.secrets:
             raise "Secrets file must contain Jenkins 'username' and 'token'"
 
+        self.url = self.secrets['url']
         self.server = jenkins.Jenkins(self.url, username=self.secrets['username'], password=self.secrets['token'])
         self.secrets.pop('token', None)
 
