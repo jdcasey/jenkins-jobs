@@ -197,7 +197,7 @@ pkocandr</adminlist>
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
-  <goals>clean verify -Prun-its</goals>
+  <goals>-B -X -V -T4 clean verify -Prun-its -Pci</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>

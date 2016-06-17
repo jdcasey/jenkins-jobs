@@ -4,14 +4,16 @@ import os
 import sys
 import glob
 import jj
+import optparse
 
-if len(sys.argv) < 2:
-    print "Usage: %s <Jenkins-URL>" % sys.argv[0]
-    exit(1)
+parser = optparse.OptionParser()
 
-URL=sys.argv[1]
+parser.add_option('-C', '--config', help='Use an alternative configuration (default: {secrets})'.format(secrets=jj.SECRETS))
+parser.add_option('-T', '--trigger', action='store_false' help='Don\'t trigger builds')
 
-jobs = jj.JenkinsJobs(URL)
+opts, args = parser.parse_args()
+
+jobs = jj.JenkinsJobs(opts.get('config'))
 
 templates = jobs.load_templates()
 
@@ -29,7 +31,8 @@ for yamlfile in glob.glob('projects/*.yaml'):
                 jobname = nameformat % project
                 jobxml = templates[job] % project
                 jobs.create_or_update(jobname, jobxml)
-                jobs.build(jobname)
+                if opts['trigger'] is True:
+                    jobs.build(jobname)
         else:
             jobname = nameformat % project
             jobxml = templates[job] % project

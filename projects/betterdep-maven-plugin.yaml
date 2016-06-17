@@ -1,2 +1,3 @@
 github-url: https://github.com/Commonjava/betterdep-maven-plugin
 name: betterdep-maven-plugin
+jdk: JDK 1.8

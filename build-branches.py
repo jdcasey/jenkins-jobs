@@ -4,14 +4,14 @@ import os
 import sys
 import glob
 import jj
+import optparse
 
-if len(sys.argv) < 2:
-    print "Usage: %s <Jenkins-URL>" % sys.argv[0]
-    exit(1)
+parser = optparse.OptionParser()
 
-URL=sys.argv[1]
+parser.add_option('-C', '--config', help='Use an alternative configuration (default: {secrets})'.format(secrets=jj.SECRETS))
+opts, args = parser.parse_args()
 
-jobs = jj.JenkinsJobs(URL)
+jobs = jj.JenkinsJobs(opts.get('config'))
 
 for yamlfile in glob.glob('projects/*.yaml'):
     project = jobs.load_project(yamlfile)
