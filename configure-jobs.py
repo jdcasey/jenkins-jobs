@@ -24,18 +24,21 @@ for yamlfile in glob.glob('projects/*.yaml'):
         print "Skipping disabled project: %(name)s" % project
         continue
 
-    for job,nameformat in project['jobs'].iteritems():
-        if job == jj.BRANCH_BUILD_JOB:
-            for branch in project['branches']:
-                project['branch'] = branch
-                jobname = nameformat % project
-                jobxml = templates[job] % project
-                jobs.create_or_update(jobname, jobxml)
-                if opts.trigger is True:
-                    jobs.build(jobname)
-        else:
+        for branch in project['branches']:
+            project[jj.BRANCH_NAME] = branch['name']
+            project[jj.BUILD_COMMAND] = branch[BUILD_COMMAND]
+
             jobname = nameformat % project
-            jobxml = templates[job] % project
+            jobxml = templates[branch.get(jj.TEMPLATE_NAME) or jj.BRANCH_BUILD_JOB] % project
+            jobs.create_or_update(jobname, jobxml)
+            if opts.trigger is True:
+                jobs.build(jobname)
+
+        prBranch = project[jj.PR_BUILD_JOB]
+        if prBranch is not None:
+            project[jj.BUILD_COMMAND] = prBranch[jj.BUILD_COMMAND]
+            jobname = nameformat % project
+            jobxml = templates[prBranch.get(jj.TEMPLATE_NAME) or jj.PR_BUILD_JOB] % project
             jobs.create_or_update(jobname, jobxml)
 
 

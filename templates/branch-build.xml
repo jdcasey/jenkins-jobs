@@ -35,7 +35,7 @@
     </com.cloudbees.jenkins.GitHubPushTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
-  <goals>-B -X -V -T4 clean deploy -Prun-its -Pci</goals>
+  <goals>%(build-command)s</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
