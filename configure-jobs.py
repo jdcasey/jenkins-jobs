@@ -9,11 +9,11 @@ import optparse
 parser = optparse.OptionParser()
 
 parser.add_option('-C', '--config', help='Use an alternative configuration (default: {secrets})'.format(secrets=jj.SECRETS))
-parser.add_option('-T', '--trigger', action='store_false' help='Don\'t trigger builds')
+parser.add_option('-T', '--trigger', action='store_false', help='Don\'t trigger builds')
 
 opts, args = parser.parse_args()
 
-jobs = jj.JenkinsJobs(opts.get('config'))
+jobs = jj.JenkinsJobs(opts.config)
 
 templates = jobs.load_templates()
 
@@ -31,7 +31,7 @@ for yamlfile in glob.glob('projects/*.yaml'):
                 jobname = nameformat % project
                 jobxml = templates[job] % project
                 jobs.create_or_update(jobname, jobxml)
-                if opts['trigger'] is True:
+                if opts.trigger is True:
                     jobs.build(jobname)
         else:
             jobname = nameformat % project

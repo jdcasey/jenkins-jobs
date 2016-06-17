@@ -11,7 +11,7 @@ parser = optparse.OptionParser()
 parser.add_option('-C', '--config', help='Use an alternative configuration (default: {secrets})'.format(secrets=jj.SECRETS))
 opts, args = parser.parse_args()
 
-jobs = jj.JenkinsJobs(opts.get('config'))
+jobs = jj.JenkinsJobs(opts.config)
 
 for yamlfile in glob.glob('projects/*.yaml'):
     project = jobs.load_project(yamlfile)
