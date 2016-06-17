@@ -81,21 +81,29 @@ class JenkinsJobs(object):
                 self.templates[key] = f.read()
         return self.templates
 
-    def create_or_update(self, name, jobxml):
-        with open(os.path.join(self.generated_dir, "%s.xml" % name), 'w') as f:
+    def create_or_update(self, name, jobxml, update_server=True):
+        configDir = os.path.join(self.generated_dir, name)
+        if os.path.isdir(configDir) is False:
+            os.makedirs(configDir)
+            
+        configXml = os.path.join(configDir, 'config.xml')
+        with open(configXml, 'w') as f:
             f.write(jobxml)
 
-        try:
-            if self.server.job_exists(name) is True:
-                print "Updating: %s" % name
-                self.server.reconfig_job(name, jobxml)
-            else:
-                print "Creating: %s" % name
-                self.server.create_job(name, jobxml)
-            return True
-        except jenkins.JenkinsException as e:
-            print "Failed: %s" % e
-        return False
+        if update_server is True:
+            try:
+                if self.server.job_exists(name) is True:
+                    print "Updating: %s" % name
+                    self.server.reconfig_job(name, jobxml)
+                else:
+                    print "Creating: %s" % name
+                    self.server.create_job(name, jobxml)
+                return True
+            except jenkins.JenkinsException as e:
+                print "Failed: %s" % e
+            return False
+        else:
+            return False
 
     def build(self, name):
         print "Triggering build: %s" % name
