@@ -1,3 +1,9 @@
 github-url: https://github.com/project-ncl/causeway
 name: causeway
 jdk: JDK 1.8
+branches:
+  - 
+    branch: 'master'
+    name-format: '%(name)s-master'
+    template: branch-build
+    build-command: '-B -X -V -T4 clean verify -Prun-its -Pci'

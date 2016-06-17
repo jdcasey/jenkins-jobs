@@ -5,34 +5,40 @@ import yaml
 import glob
 import shutil
 
-BRANCH_BUILD_JOB='branch-build'
-PR_BUILD_JOB='pr-build'
-GENERATED_XML = "generated-xml"
-SECRETS=os.path.join(os.getenv("HOME"), ".jenkins-secrets.yaml")
-DEFAULTS=os.path.join(os.getcwd(), 'defaults.yaml')
+BRANCH_NAME = 'branch'
+BUILD_COMMAND = 'build-command'
+TEMPLATE_NAME = 'template'
+NAME_FORMAT = 'name-format'
+
+BRANCH_BUILD_JOB = 'branch-build'
+PR_BUILD_JOB = 'pr-build'
+
+GENERATED_XML_DIRNAME = "generated-xml"
+DEFAULT_CONFIG_FILE = os.path.join(os.getenv("HOME"), ".jenkins-jobs.yaml")
+PROJECT_DEFAULTS_FILE = os.path.join(os.getcwd(), 'defaults.yaml')
 
 class JenkinsJobs(object):
-    def __init__(self, secrets=None):
-        sfile = secrets or SECRETS
+    def __init__(self, conf=None):
+        sfile = conf or DEFAULT_CONFIG_FILE
 
         self.templates = None
         self.defaults = None
 
-        self.secrets = {}
+        self.config = {}
         if os.path.exists(sfile):
             with open(sfile) as f:
-                self.secrets = yaml.load(f)
+                self.config = yaml.load(f)
         else:
-            raise "No secrets file found at: %s!" % sfile
+            raise "No configuration file found at: %s!" % sfile
 
-        if 'username' not in self.secrets or 'token' not in self.secrets:
-            raise "Secrets file must contain Jenkins 'username' and 'token'"
+        if 'username' not in self.config or 'token' not in self.config:
+            raise "Configuration file must contain Jenkins 'url', 'username', and 'token'"
 
-        self.url = self.secrets['url']
-        self.server = jenkins.Jenkins(self.url, username=self.secrets['username'], password=self.secrets['token'])
-        self.secrets.pop('token', None)
+        self.url = self.config['url']
+        self.server = jenkins.Jenkins(self.url, username=self.config['username'], password=self.config['token'])
+        self.config.pop('token', None)
 
-        self.generated_dir = os.path.join(os.getcwd(), GENERATED_XML)
+        self.generated_dir = os.path.join(os.getcwd(), GENERATED_XML_DIRNAME)
         if os.path.isdir(self.generated_dir):
             shutil.rmtree(self.generated_dir)
         os.makedirs(self.generated_dir)
@@ -46,7 +52,7 @@ class JenkinsJobs(object):
     def load_project(self, yaml_file):
         self.init_defaults()
         project = self.defaults.copy()
-        project.update(self.secrets)
+        project.update(self.config)
         with open(yaml_file) as f:
             project.update(yaml.load(f))
         return project
@@ -56,11 +62,11 @@ class JenkinsJobs(object):
             return self.defaults
 
         self.defaults={}
-        if os.path.exists(DEFAULTS):
-            with open(DEFAULTS) as f:
+        if os.path.exists(PROJECT_DEFAULTS_FILE):
+            with open(PROJECT_DEFAULTS_FILE) as f:
                 self.defaults = yaml.load(f)
         else:
-            print "WARNING: No defaults found at: %s" % DEFAULTS
+            print "WARNING: No defaults found at: %s" % PROJECT_DEFAULTS_FILE
 
         return self.defaults
 

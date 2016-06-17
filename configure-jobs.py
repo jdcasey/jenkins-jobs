@@ -8,15 +8,18 @@ import optparse
 
 parser = optparse.OptionParser()
 
-parser.add_option('-C', '--config', help='Use an alternative configuration (default: {secrets})'.format(secrets=jj.SECRETS))
-parser.add_option('-T', '--trigger', action='store_false', help='Trigger builds')
+parser.add_option('-C', '--config', help='Use an alternative configuration (default: {secrets})'.format(secrets=jj.DEFAULT_CONFIG_FILE))
+parser.add_option('-T', '--trigger', action='store_true', help='Trigger builds')
 
 opts, args = parser.parse_args()
 
+print "Setting up Jenkins connection"
 jobs = jj.JenkinsJobs(opts.config)
 
+print "Reading templates"
 templates = jobs.load_templates()
 
+print "Processing project configurations"
 for yamlfile in glob.glob('projects/*.yaml'):
     project = jobs.load_project(yamlfile)
 
@@ -24,18 +27,24 @@ for yamlfile in glob.glob('projects/*.yaml'):
         print "Skipping disabled project: %(name)s" % project
         continue
 
-    for job,nameformat in project['jobs'].iteritems():
-        if job == jj.BRANCH_BUILD_JOB:
-            for branch in project['branches']:
-                project['branch'] = branch
-                jobname = nameformat % project
-                jobxml = templates[job] % project
-                jobs.create_or_update(jobname, jobxml)
-                if opts.trigger is True:
-                    jobs.build(jobname)
-        else:
-            jobname = nameformat % project
-            jobxml = templates[job] % project
-            jobs.create_or_update(jobname, jobxml)
+    print "Processing branch configs for: %s" % project['name']
+    for branch in project['branches']:
+        branchName = str(branch[jj.BRANCH_NAME])
+        project[jj.BRANCH_NAME] = branchName
+        project[jj.BUILD_COMMAND] = branch[jj.BUILD_COMMAND]
+
+        jobname = branch[jj.NAME_FORMAT] % project
+        jobxml = templates[branch.get(jj.TEMPLATE_NAME) or jj.BRANCH_BUILD_JOB] % project
+        jobs.create_or_update(jobname, jobxml)
+        if opts.trigger is True:
+            jobs.build(jobname)
+
+    print "Processing PR branch config for: %s" % project['name']
+    prBranch = project[jj.PR_BUILD_JOB]
+    if prBranch is not None:
+        project[jj.BUILD_COMMAND] = prBranch[jj.BUILD_COMMAND]
+        jobname = prBranch[jj.NAME_FORMAT] % project
+        jobxml = templates[prBranch.get(jj.TEMPLATE_NAME) or jj.PR_BUILD_JOB] % project
+        jobs.create_or_update(jobname, jobxml)
 
 

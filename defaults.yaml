@@ -1,6 +1,11 @@
 jdk: 'JDK 1.7'
-jobs:
-  pr-build: '%(name)s-PRs'
-  branch-build: '%(name)s-%(branch)s'
+pr-build:
+  name-format: '%(name)s-PRs'
+  template: pr-build
+  build-command: '-B -X -V -T4 clean verify -Prun-its -Pci'
 branches:
-  - master
+  - 
+    branch: 'master'
+    name-format: '%(name)s-master'
+    template: branch-build
+    build-command: '-B -X -V -T4 clean deploy -Prun-its -Pci'
