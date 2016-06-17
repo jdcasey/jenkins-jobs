@@ -9,6 +9,7 @@ import optparse
 parser = optparse.OptionParser()
 
 parser.add_option('-C', '--config', help='Use an alternative configuration (default: {secrets})'.format(secrets=jj.DEFAULT_CONFIG_FILE))
+parser.add_option('-G', '--generate-only', action='store_true', help='Only generate the job XML files, don\'t update Jenkins.')
 parser.add_option('-T', '--trigger', action='store_true', help='Trigger builds')
 
 opts, args = parser.parse_args()
@@ -35,8 +36,8 @@ for yamlfile in glob.glob('projects/*.yaml'):
 
         jobname = branch[jj.NAME_FORMAT] % project
         jobxml = templates[branch.get(jj.TEMPLATE_NAME) or jj.BRANCH_BUILD_JOB] % project
-        jobs.create_or_update(jobname, jobxml)
-        if opts.trigger is True:
+        stored = jobs.create_or_update(jobname, jobxml, opts.generate_only is False)
+        if stored is True and opts.trigger is True:
             jobs.build(jobname)
 
     print "Processing PR branch config for: %s" % project['name']
@@ -45,6 +46,6 @@ for yamlfile in glob.glob('projects/*.yaml'):
         project[jj.BUILD_COMMAND] = prBranch[jj.BUILD_COMMAND]
         jobname = prBranch[jj.NAME_FORMAT] % project
         jobxml = templates[prBranch.get(jj.TEMPLATE_NAME) or jj.PR_BUILD_JOB] % project
-        jobs.create_or_update(jobname, jobxml)
+        jobs.create_or_update(jobname, jobxml, opts.generate_only is False)
 
 
