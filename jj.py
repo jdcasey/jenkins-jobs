@@ -87,7 +87,7 @@ class JenkinsJobs(object):
             return self.server.get_job_config(name)
         return None
 
-    def create_or_update(self, name, jobxml, update_server=True):
+    def create_or_update(self, name, jobxml, force_update=False, update_server=True):
         configDir = os.path.join(self.generated_dir, name)
         if os.path.isdir(configDir) is False:
             os.makedirs(configDir)
@@ -103,7 +103,7 @@ class JenkinsJobs(object):
                     with open(os.path.join(configDir, 'config.xml.last'), 'w') as f:
                         f.write(oldConfig)
 
-                    if re.sub('\s', '', jobxml) != re.sub('\s', '', oldConfig):
+                    if force_update is True or re.sub('\s', '', jobxml) != re.sub('\s', '', oldConfig):
                         print "Updating: %s" % name
                         self.server.reconfig_job(name, jobxml)
                         return True

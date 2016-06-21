@@ -9,6 +9,7 @@ import optparse
 parser = optparse.OptionParser()
 
 parser.add_option('-C', '--config', help='Use an alternative configuration (default: {secrets})'.format(secrets=jj.DEFAULT_CONFIG_FILE))
+parser.add_option('-f', '--force', action='store_true', help='Force-update configurations (don\'t skip if configuration is unchanged)')
 parser.add_option('-G', '--generate-only', action='store_true', help='Only generate the job XML files, don\'t update Jenkins.')
 parser.add_option('-T', '--trigger', action='store_true', help='Trigger builds')
 
@@ -22,7 +23,12 @@ templates = jobs.load_templates()
 
 print "Processing project configurations"
 
-for yamlfile in glob.glob('projects/*.yaml'):
+if args:
+    projects = args
+else:
+    projects = glob.glob('projects/*.yaml')
+
+for yamlfile in projects:
     project = jobs.load_project(yamlfile)
 
     if project.get('disabled') is True:
@@ -37,7 +43,7 @@ for yamlfile in glob.glob('projects/*.yaml'):
 
         jobname = branch[jj.NAME_FORMAT] % project
         jobxml = templates[branch.get(jj.TEMPLATE_NAME) or jj.BRANCH_BUILD_JOB] % project
-        stored = jobs.create_or_update(jobname, jobxml, not opts.generate_only)
+        stored = jobs.create_or_update(jobname, jobxml, opts.force, not opts.generate_only)
         if stored is True and opts.trigger is True:
             jobs.build(jobname)
 
@@ -47,6 +53,6 @@ for yamlfile in glob.glob('projects/*.yaml'):
         project[jj.BUILD_COMMAND] = prBranch[jj.BUILD_COMMAND]
         jobname = prBranch[jj.NAME_FORMAT] % project
         jobxml = templates[prBranch.get(jj.TEMPLATE_NAME) or jj.PR_BUILD_JOB] % project
-        jobs.create_or_update(jobname, jobxml, not opts.generate_only)
+        jobs.create_or_update(jobname, jobxml, opts.force, not opts.generate_only)
 
 
