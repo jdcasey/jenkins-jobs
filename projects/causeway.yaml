@@ -6,4 +6,4 @@ branches:
     branch: 'master'
     name-format: '%(name)s-master'
     template: branch-build
-    build-command: '-B -X -V -T4 clean verify -Prun-its -Pci'
+    build-command: '-B -X -V -T4 clean verify -Prun-its -Pci -Ddisable-pnc-it'
