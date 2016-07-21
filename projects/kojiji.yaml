@@ -1,3 +1,13 @@
 github-url: https://github.com/release-engineering/kojiji
 name: kojiji
 jdk: JDK 1.8
+pr-build:
+  name-format: '%(name)s-PRs'
+  template: pr-build
+  build-command: '-B -X -V -T4 clean verify -Prun-its -Pci -Plocal-its -DdockerProvider=remote -Ddocker.host=172.17.0.1'
+branches:
+  - 
+    branch: 'master'
+    name-format: '%(name)s-master'
+    template: branch-build
+    build-command: '-B -X -V -T4 clean deploy -Prun-its -Pci -Plocal-its -DdockerProvider=remote -Ddocker.host=172.17.0.1'
