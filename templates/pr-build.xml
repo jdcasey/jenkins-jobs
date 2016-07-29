@@ -195,7 +195,7 @@ pkocandr</adminlist>
       </extensions>
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
   </triggers>
-  <concurrentBuild>false</concurrentBuild>
+  <concurrentBuild>true</concurrentBuild>
   <goals>%(build-command)s</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
