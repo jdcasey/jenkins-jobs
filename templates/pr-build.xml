@@ -182,6 +182,11 @@ pkocandr</adminlist>
           <branch/>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
       </whiteListTargetBranches>
+      <blackListTargetBranches>
+        <org.jenkinsci.plugins.ghprb.GhprbBranch>
+          <branch>gh-pages</branch>
+        </org.jenkinsci.plugins.ghprb.GhprbBranch>
+      </blackListTargetBranches>
       <project>%(name)s-PRs</project>
       <__project class="maven2-moduleset" reference="../../.."/>
       <gitHubAuthId>%(secret-gitHubAuthId)s</gitHubAuthId>
