@@ -1,4 +1,4 @@
 # disabled: true
 github-url: https://github.com/Commonjava/CI-integration-test
 name: CI-integration-test
-jdk: JDK 1.8
+jdk: OpenJDK 1.8.0
