@@ -169,8 +169,8 @@ rnc
 pkocandr</adminlist>
       <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
       <orgslist>Commonjava
-      project-ncl
-      release-engineering</orgslist>
+project-ncl
+release-engineering</orgslist>
       <cron>H/5 * * * *</cron>
       <buildDescTemplate/>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
