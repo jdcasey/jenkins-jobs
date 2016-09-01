@@ -6,9 +6,9 @@ branches:
     branch: 'master'
     name-format: '%(name)s-master'
     template: branch-build
-    build-command: '-B -X -V -T4 clean deploy -Prun-its -Pci'
+    build-command: '-B -V clean deploy -Prun-its -Pci'
   - 
     branch: '0.11.x'
     name-format: '%(name)s-0.11.x'
     template: branch-build
-    build-command: '-B -X -V -T4 clean deploy -Prun-its -Pci'
+    build-command: '-B -V clean deploy -Prun-its -Pci'

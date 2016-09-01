@@ -4,15 +4,15 @@ jdk: JDK 1.8
 pr-build:
   name-format: '%(name)s-PRs'
   template: pr-build
-  build-command: '-B -X -V -T4 clean verify -Prun-its -Pci -Pdocker'
+  build-command: '-B -V clean verify -Prun-its -Pci'
 branches:
   - 
     branch: 'master'
     name-format: '%(name)s-master'
     template: branch-build
-    build-command: '-B -X -V -T4 clean deploy -Prun-its -Pci -Pdocker'
+    build-command: '-B -V clean deploy -Prun-its -Pci -Pdocker'
   - 
     branch: '0.99.1.x'
     name-format: '%(name)s-0.99.1.x'
     template: branch-build
-    build-command: '-B -X -V -T4 clean deploy -Prun-its -Pci -Pdocker'
+    build-command: '-B -V clean deploy -Prun-its -Pci -Pdocker'
