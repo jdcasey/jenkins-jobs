@@ -2,10 +2,10 @@ jdk: 'JDK 1.7'
 pr-build:
   name-format: '%(name)s-PRs'
   template: pr-build
-  build-command: '-B -X -V -T4 clean verify -Prun-its -Pci'
+  build-command: '-B -V clean verify -Prun-its -Pci'
 branches:
   - 
     branch: 'master'
     name-format: '%(name)s-master'
     template: branch-build
-    build-command: '-B -X -V -T4 clean deploy -Prun-its -Pci'
+    build-command: '-B -V clean deploy -Prun-its -Pci -Pdocker'

@@ -168,7 +168,9 @@
 rnc
 pkocandr</adminlist>
       <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
-      <orgslist/>
+      <orgslist>Commonjava
+project-ncl
+release-engineering</orgslist>
       <cron>H/5 * * * *</cron>
       <buildDescTemplate/>
       <onlyTriggerPhrase>false</onlyTriggerPhrase>
@@ -182,6 +184,11 @@ pkocandr</adminlist>
           <branch/>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
       </whiteListTargetBranches>
+      <blackListTargetBranches>
+        <org.jenkinsci.plugins.ghprb.GhprbBranch>
+          <branch>gh-pages</branch>
+        </org.jenkinsci.plugins.ghprb.GhprbBranch>
+      </blackListTargetBranches>
       <project>%(name)s-PRs</project>
       <__project class="maven2-moduleset" reference="../../.."/>
       <gitHubAuthId>%(secret-gitHubAuthId)s</gitHubAuthId>
@@ -195,7 +202,7 @@ pkocandr</adminlist>
       </extensions>
     </org.jenkinsci.plugins.ghprb.GhprbTrigger>
   </triggers>
-  <concurrentBuild>false</concurrentBuild>
+  <concurrentBuild>true</concurrentBuild>
   <goals>%(build-command)s</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>

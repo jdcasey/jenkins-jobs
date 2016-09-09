@@ -4,16 +4,17 @@ import os
 import sys
 import glob
 import jj
-import optparse
+import argparse
 
-parser = optparse.OptionParser()
+parser = argparse.ArgumentParser(description="Configure jobs on a Jenkins CI server based on project YAML files and some job templates")
 
-parser.add_option('-C', '--config', help='Use an alternative configuration (default: {secrets})'.format(secrets=jj.DEFAULT_CONFIG_FILE))
-parser.add_option('-f', '--force', action='store_true', help='Force-update configurations (don\'t skip if configuration is unchanged)')
-parser.add_option('-G', '--generate-only', action='store_true', help='Only generate the job XML files, don\'t update Jenkins.')
-parser.add_option('-T', '--trigger', action='store_true', help='Trigger builds')
+parser.add_argument('-C', '--config', dest="config", help='Use an alternative configuration (default: {secrets})'.format(secrets=jj.DEFAULT_CONFIG_FILE))
+parser.add_argument('-f', '--force', dest="force", action='store_true', help='Force-update configurations (don\'t skip if configuration is unchanged)')
+parser.add_argument('-G', '--generate-only', dest="generate_only", action='store_true', help='Only generate the job XML files, don\'t update Jenkins.')
+parser.add_argument('-T', '--trigger', dest="trigger", action='store_true', help='Trigger builds')
+parser.add_argument('projects', nargs="*", help="Specific projects to configure (empty means process all)")
 
-opts, args = parser.parse_args()
+opts = parser.parse_args()
 
 print "Setting up Jenkins connection"
 jobs = jj.JenkinsJobs(opts.config)
@@ -23,8 +24,8 @@ templates = jobs.load_templates()
 
 print "Processing project configurations"
 
-if args:
-    projects = args
+if opts.projects is not None and len(opts.projects) > 0:
+    projects = opts.projects
 else:
     projects = glob.glob('projects/*.yaml')
 
