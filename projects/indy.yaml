@@ -12,7 +12,7 @@ branches:
     template: branch-build
     build-command: '-B -V clean deploy -Prun-its -Pci -Pdocker'
   - 
-    branch: '1.0.x'
+    branch: 'indy-1.0.x'
     name-format: '%(name)s-1.0.x'
     template: branch-build
     build-command: '-B -V clean deploy -Prun-its -Pci -Pdocker'
